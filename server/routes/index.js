@@ -14,5 +14,9 @@ router.get('/json', async(req, res) => {
 router.get('/', function (req, res, next) {
   res.render('index', { title: 'Express' });
 });
+router.post('/save',(req,res)=>{
+  console.log(req.body.data);
+  res.json(req.body.data);
+})
 
 module.exports = router;

@@ -34,7 +34,39 @@ function readDir(dir) {
 
     })
 }
+function readDirFlat(dir,current) {
+    return new Promise((resolve, reject) => {
+       
+        fs.readdir(dir).then((data) => {
+            data = data.filter(name => !name.startsWith('.'))
+            Promise.all(data.map(filename => {
+                let currentPath = path.join(dir, filename);
+                return fs.stat(currentPath).then((data) => {
+                    let isDirectory = data.isDirectory();
+                    let obj = { name: filename, isDirectory, path: currentPath }
+                    current.push(obj);
+                    if (isDirectory) {
+                        return readDirFlat(currentPath,current);
+                    } else {
+                        return fs.readFile(currentPath, { encoding: 'utf8' }).then(
+                            (contents) => {
+                                obj.contents = contents;
+                            }
+                        )
+                    }
+                })
+            })).then(() => {
+                current.sort((a, b) => b.isDirectory - a.isDirectory)
+                resolve(current)
+
+            })
+        })
+
+    })
+}
 module.exports = {
-    readDir
+    readDir,
+    readDirFlat
 }
 // readDir('abulafa').then(result=>console.log(JSON.stringify(result,null,2)))
+readDirFlat('abulafa',[]).then(result=>console.log(JSON.stringify(result,null,2)))
