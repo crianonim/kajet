@@ -26,6 +26,7 @@ function readDir(dir) {
                     }
                 })
             })).then(() => {
+                result.sort((a, b) => b.isDirectory - a.isDirectory)
                 resolve(result)
 
             })
