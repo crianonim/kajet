@@ -29,15 +29,18 @@ function save(){
 function choose(element) {
     let name = element.innerText;
     let item = findItemByName(name, data)
+    console.log(item.contents)
+   
     if (!item.isDirectory) {
         save();
-       mainElement.innerText = item.contents;
-        chosen=item;
+        mainElement.innerText = item.contents;
     } else {
         item.collapsed=!item.collapsed;
         console.log(item)
         element.parentElement.classList.toggle('collapsed')
     }
+    chosen=item;
+    document.getElementById("chosen").innerText=chosen.name
 }
 function redrawSide(){
     document.getElementById('side').innerHTML = data.map(createItemHtml).join('\n');
