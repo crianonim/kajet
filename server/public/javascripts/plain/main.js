@@ -13,25 +13,29 @@ function init() {
 }
 function createItemHtml(item) {
     return `
-    <div class="item ${item.isDirectory ? 'dir-item' : 'file-item'}">
+    <div class="item ${item.isDirectory ? 'dir-item' : 'file-item'}  ${item.collapsed?'collapsed':''}">
     <span class="name" onclick="choose(this)">${item.name}</span>
     ${item.isDirectory ? item.files.map(createItemHtml).join('\n') : ''}
     </div>
     `
 }
 function save(){
-    if (!chosen) return
-    console.log(chosen.name)
-    updateObj(chosen.name,mainElement.innerText);
+    if (chosen) {
+        console.log(chosen.name)
+        updateObj(chosen.name,mainElement.innerText);
+    }
     storeData();
 }
 function choose(element) {
     let name = element.innerText;
     let item = findItemByName(name, data)
     if (!item.isDirectory) {
+        save();
        mainElement.innerText = item.contents;
         chosen=item;
     } else {
+        item.collapsed=!item.collapsed;
+        console.log(item)
         element.parentElement.classList.toggle('collapsed')
     }
 }
