@@ -3,9 +3,10 @@ extends layout
 block content
   #app
     #header
-    h3 Kajet
+    h3 Kajet 
+     button(onclick="save()") Save
     #container
       #side
-      #main(contenteditable=true,spellcheck=false,oninput="input()")
+      #main(contenteditable=true,spellcheck=false,oninput="input()",onchange="change()")
     #footer
   

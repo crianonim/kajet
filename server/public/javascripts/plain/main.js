@@ -1,7 +1,15 @@
 window.addEventListener("load", init)
+let chosen=null;
+let mainElement=null;
 function init() {
     console.log("KK")
-    document.getElementById('side').innerHTML = data.map(createItemHtml).join('\n');
+    mainElement=document.getElementById('main')
+    if (localStorage.data){
+        data=JSON.parse(localStorage.data)
+    }else {
+        storeData();
+    }
+    redrawSide();
 }
 function createItemHtml(item) {
     return `
@@ -11,19 +19,45 @@ function createItemHtml(item) {
     </div>
     `
 }
+function save(){
+    if (!chosen) return
+    console.log(chosen.name)
+    updateObj(chosen.name,mainElement.innerText);
+    storeData();
+}
 function choose(element) {
-    let name = element.textContent;
+    let name = element.innerText;
     let item = findItemByName(name, data)
     if (!item.isDirectory) {
-        document.getElementById('main').textContent = item.contents;
+       mainElement.innerText = item.contents;
+        chosen=item;
     } else {
         element.parentElement.classList.toggle('collapsed')
     }
 }
+function redrawSide(){
+    document.getElementById('side').innerHTML = data.map(createItemHtml).join('\n');
+}
 function input() {
     console.log(this)
 }
-
+function change(){
+    console.log("change",this)
+}
+function updateObj(name,contents){
+    let obj=findItemByName(name,data);
+    console.log(contents)
+    if (!obj.oldContents) {
+        obj.oldContents=obj.contents;
+    }
+    if (contents!=obj.contents){
+        console.log("Inne!");
+        obj.contents=contents;
+    }
+}
+function storeData(){
+    localStorage.data=JSON.stringify(data);
+}
 function findItemByName(name, dir) {
     // console.log("Inside ",dir)
     let thisDir = dir.find(el => el.name == name);
