@@ -3,6 +3,7 @@ var router = express.Router();
 const path = require('path');
 const lib = require('../lib');
 const fs= require('fs');
+const promisify=require('util').promisify;
 const repo=path.join(__dirname, "..", "abulafa")
 const git=require('simple-git/promise')(repo);
 // router.get('/data', async (req, res) => {
@@ -22,8 +23,8 @@ router.get('/json', async(req, res) => {
 router.post('/save',async (req,res)=>{
   console.log(req.body);
   let file=req.body;
-  await fs.promises.mkdir(path.join(repo,file.parent),{recursive:true});
-  await fs.promises.writeFile(path.join(repo,file.path),file.contents)
+  await promisify(fs.mkdir)(path.join(repo,file.parent),{recursive:true}).catch(console.error);
+  await promisify(fs.writeFile)(path.join(repo,file.path),file.contents).catch(console.error)
   res.json(req.body);
 })
 
