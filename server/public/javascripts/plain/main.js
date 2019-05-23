@@ -7,6 +7,7 @@ async function init() {
     if (localStorage.length) {
         Object.keys(localStorage).forEach(el => { data.push(JSON.parse(localStorage[el])) })
         data.sort((a, b) => a.name < b.name ? -1 : 1).sort((a, b) => b.isDirectory - a.isDirectory)
+        // alert(data)
 
     } else {
         data = await fetch('/json').then(res => res.json())
@@ -23,6 +24,11 @@ function createItemHtml(item) {
     </div>
     `
 }
+function clearStorage(){
+    // alert(data);
+    localStorage.clear();
+}
+
 function save() {
     if (chosen) {
         // console.log(chosen.name)
