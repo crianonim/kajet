@@ -2,17 +2,20 @@ extends layout
 
 block content
   #app
-    #header
-    h3 
-     button(onclick="toggleSide()") Files
-     span Kajet 
-     button(onclick="save()") Save 
+   #header
+    nav
+     button(onclick="toggleSide()") ...
+     span#chosen 
+     button(onclick="stepFile(-1)") ^ Previous ^
+     button(onclick="stepFile(1)") ⌄ Next &#8964;
+    #options
+     button(onclick="save()") Save
      button(onclick="publish()") Publish
      button(onclick="clearStorage()") Clear
-     span
-     span#chosen 
-    #container
+
+    
+   #container
       #side
       #main(contenteditable=true,spellcheck=false,oninput="input()")
-    #footer
+   #footer
   

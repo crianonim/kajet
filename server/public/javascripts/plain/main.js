@@ -2,6 +2,7 @@ window.addEventListener("load", init)
 let chosen = null;
 let mainElement = null;
 let data = [];
+let fileList=[];
 async function init() {
     mainElement = document.getElementById('main')
     if (localStorage.length) {
@@ -17,9 +18,10 @@ async function init() {
     redrawSide();
 }
 function createItemHtml(item) {
+    if (!item.isDirectory)    fileList.push(item.name);
     return `
     <div class="item ${item.isDirectory ? 'dir-item' : 'file-item'}  ${item.collapsed ? 'collapsed' : ''}">
-    <span class="name" onclick="choose(this)">${item.name}</span>
+    <span class="name" onclick="choose(this.innerText,this)">${item.name}</span>
     ${item.isDirectory ? getChildrenOfItem(item).map(createItemHtml).join('\n') : ''}
     </div>
     `
@@ -28,6 +30,14 @@ function clearStorage(){
     // alert(data);
     localStorage.clear();
 }
+
+function stepFile(step){
+
+    let index=step+(chosen?fileList.indexOf(chosen.name):-1);
+    if (index<0 || index>=fileList.length) return;
+    choose(fileList[index])
+}
+
 
 function save() {
     if (chosen) {
@@ -39,8 +49,8 @@ function save() {
 function getChildrenOfItem(item) {
     return data.filter(el => el.parent == item.path)
 }
-function choose(element) {
-    let name = element.innerText;
+function choose(name,element=null) {
+    // let name = element.innerText;
     let item = findItemByName(name)
     // console.log(item.contents)
 
@@ -94,10 +104,12 @@ function publish() {
 }
 
 function toggleSide(){
-    
+    let options=document.getElementById('options');
     let side=document.getElementById('side')
     console.log("SIDE",side)
     side.classList.toggle('hidden');
+    options.classList.toggle('hidden');
+    
 }
 
 function updateObj(name, contents) {

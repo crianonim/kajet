@@ -18,14 +18,17 @@ body {
 
 #side {
   width: 200px;
-  background-color: aquamarine;
+  max-width: 30%;
+  background-color: #eee; 
   overflow-y: scroll;
   flex-shrink: 0;
   height: 100%;
+  font-size: 0.8em;
+  line-height: 1.5;
 }
 
 #main {
-  background-color: beige;
+  /* background-color: beige; */
   flex-grow: 1;
   white-space: pre-wrap;
   height: 100%;
@@ -52,7 +55,8 @@ body {
 }
 
 .item .name:hover {
-  background-color: blueviolet;
+  background-color:#333;
+  color:#eee;
 }
 
 #side>.item {
@@ -61,4 +65,19 @@ body {
 
 .hidden {
   display: none;
+}
+button{
+  background-color: #ccc;
+  padding: 2px;
+  margin: 2px;
+  border: 1px solid #333;
+
+}
+nav {
+  display: flex;
+  align-items: center;
+
+}
+#chosen {
+  flex-grow: 1;
 }
