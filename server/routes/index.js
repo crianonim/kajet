@@ -2,7 +2,9 @@ var express = require('express');
 var router = express.Router();
 const path = require('path');
 const lib = require('../lib');
+const fs= require('fs');
 const repo=path.join(__dirname, "..", "abulafa")
+const git=require('simple-git/promise')(repo);
 // router.get('/data', async (req, res) => {
 //   let data = await lib.readDir(repo);
 //   res.send(`let data=${JSON.stringify(data, null, 1)}`)
@@ -16,13 +18,26 @@ router.get('/json', async(req, res) => {
   })
   res.json(data);
 });
+
+router.post('/save',async (req,res)=>{
+  console.log(req.body);
+  let file=req.body;
+  await fs.promises.mkdir(path.join(repo,file.parent),{recursive:true});
+  await fs.promises.writeFile(path.join(repo,file.path),file.contents)
+  res.json(req.body);
+})
+
+router.get('/push', async function (req, res, next) {
+  await git.add('.');
+  await git.commit('Sync from app');
+  await git.push();
+console.log("PUSH")
+res.send("OK")
+
+});
+
 /* GET home page. */
 router.get('/', function (req, res, next) {
   res.render('index', { title: 'Kajet' });
 });
-router.post('/save',(req,res)=>{
-  console.log(req.body.data);
-  res.json(req.body.data);
-})
-
 module.exports = router;

@@ -58,3 +58,7 @@ body {
 #side>.item {
   padding-left: 0;
 }
+
+.hidden {
+  display: none;
+}
