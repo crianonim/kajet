@@ -1,12 +1,16 @@
 window.addEventListener("load", init)
 let chosen=null;
 let mainElement=null;
-function init() {
-    console.log("KK")
+let data=[];
+async function init() {
     mainElement=document.getElementById('main')
-    if (localStorage.data){
-        data=JSON.parse(localStorage.data)
+    if (localStorage.length){
+        Object.keys(localStorage).forEach(el=>{data.push(JSON.parse(localStorage[el]))})
+        data.sort( (a,b )=> a.name < b.name ? -1 : 1).sort( (a,b)=> b.isDirectory - a.isDirectory)
+
     }else {
+        data=await fetch('/json').then(res=>res.json())
+        // console.log(data)
         storeData();
     }
     redrawSide();
@@ -15,24 +19,32 @@ function createItemHtml(item) {
     return `
     <div class="item ${item.isDirectory ? 'dir-item' : 'file-item'}  ${item.collapsed?'collapsed':''}">
     <span class="name" onclick="choose(this)">${item.name}</span>
-    ${item.isDirectory ? item.files.map(createItemHtml).join('\n') : ''}
+    ${item.isDirectory ? getChildrenOfItem(item).map(createItemHtml).join('\n') : ''}
     </div>
     `
 }
 function save(){
     if (chosen) {
-        console.log(chosen.name)
+        // console.log(chosen.name)
         updateObj(chosen.name,mainElement.innerText);
     }
     storeData();
 }
+function getChildrenOfItem(item){
+    return data.filter(el=>el.parent==item.path)
+}
 function choose(element) {
     let name = element.innerText;
-    let item = findItemByName(name, data)
-    console.log(item.contents)
+    let item = findItemByName(name)
+    // console.log(item.contents)
    
     if (!item.isDirectory) {
-        save();
+        if (chosen){
+            if(!chosen.isDirectory){
+                updateObj(chosen.name,mainElement.innerText);
+                storeItem(chosen)
+            }
+        }
         mainElement.innerText = item.contents;
     } else {
         item.collapsed=!item.collapsed;
@@ -43,17 +55,15 @@ function choose(element) {
     document.getElementById("chosen").innerText=chosen.name
 }
 function redrawSide(){
-    document.getElementById('side').innerHTML = data.map(createItemHtml).join('\n');
+    document.getElementById('side').innerHTML = data.filter(el=>el.parent=="").map(createItemHtml).join('\n');
 }
 function input() {
     console.log(this)
 }
-function change(){
-    console.log("change",this)
-}
+
 function updateObj(name,contents){
-    let obj=findItemByName(name,data);
-    console.log(contents)
+    let obj=findItemByName(name);
+    // console.log(contents)
     if (!obj.oldContents) {
         obj.oldContents=obj.contents;
     }
@@ -63,20 +73,13 @@ function updateObj(name,contents){
     }
 }
 function storeData(){
-    localStorage.data=JSON.stringify(data);
+    data.forEach(el=>{
+        storeItem(el);
+    })
 }
-function findItemByName(name, dir) {
-    // console.log("Inside ",dir)
-    let thisDir = dir.find(el => el.name == name);
-    if (thisDir) return thisDir;
-    let dirs = dir.filter(el => el.isDirectory);
-    let found
-    for (let i = 0; i < dirs.length; i++) {
-        let check = findItemByName(name, dirs[i].files);
-        if (check) {
-            found = check;
-            break;
-        }
-    }
-    return found;
+function storeItem(item){
+    localStorage.setItem(item.name,JSON.stringify(item))
+}
+function findItemByName(name) {
+   return data.find(el=>el.name==name)
 }
