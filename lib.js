@@ -1,6 +1,6 @@
 const fs = require('fs').promises;
 const path = require('path');
-
+let id=0;
 function readDir(dir) {
     return new Promise((resolve, reject) => {
         let result = [];
@@ -34,7 +34,7 @@ function readDir(dir) {
 
     })
 }
-function readDirFlat(dir,current) {
+function readDirFlat(dir,current=[]) {
     return new Promise((resolve, reject) => {
        
         fs.readdir(dir).then((data) => {
@@ -43,10 +43,10 @@ function readDirFlat(dir,current) {
                 let currentPath = path.join(dir, filename);
                 return fs.stat(currentPath).then((data) => {
                     let isDirectory = data.isDirectory();
-                    let obj = { name: filename, isDirectory, path: currentPath }
+                    let obj = { name: filename, isDirectory, path: currentPath, parent:dir }
                     current.push(obj);
                     if (isDirectory) {
-                        return readDirFlat(currentPath,current);
+                        return readDirFlat(currentPath,current)
                     } else {
                         return fs.readFile(currentPath, { encoding: 'utf8' }).then(
                             (contents) => {
@@ -69,4 +69,4 @@ module.exports = {
     readDirFlat
 }
 // readDir('abulafa').then(result=>console.log(JSON.stringify(result,null,2)))
-readDirFlat('abulafa',[]).then(result=>console.log(JSON.stringify(result,null,2)))
+//readDirFlat('abulafa',[]).then(result=>console.log(JSON.stringify(result,null,2)))
