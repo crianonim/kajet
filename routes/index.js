@@ -28,8 +28,28 @@ router.post('/save',async (req,res)=>{
   res.json(req.body);
 })
 
+router.get('/pull', async function (req, res, next) {
+ let result=await git.pull().catch( (e)=>{
+   console.error(e);
+   res.json(e);
+ } );
+console.log("PULL")
+res.json(result);
+
+})
+router.get('/status', async function (req, res, next) {
+  await git.fetch();
+  let result=await git.status().catch( (e)=>{
+    console.error(e);
+    res.json(e);
+  } );
+ console.log("Status")
+ res.json(result);
+ 
+ })
 router.get('/push', async function (req, res, next) {
   await git.add('.');
+  await git.pull();
   await git.commit('Sync from app');
   await git.push();
 console.log("PUSH")

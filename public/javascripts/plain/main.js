@@ -102,7 +102,12 @@ function publish() {
     }
     ).catch(console.error);
 }
-
+function pull(){
+    fetch('/pull').then((res)=>res.json()).then(console.log)
+}
+function status(){
+    fetch('/status').then((res)=>res.json()).then(console.log)
+}
 function toggleSide(){
     let options=document.getElementById('options');
     let side=document.getElementById('side')
