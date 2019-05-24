@@ -2,7 +2,7 @@ window.addEventListener("load", init)
 let chosen = null;
 let mainElement = null;
 let data = [];
-let fileList=[];
+let fileList = [];
 async function init() {
     mainElement = document.getElementById('main')
     if (localStorage.length) {
@@ -18,7 +18,7 @@ async function init() {
     redrawSide();
 }
 function createItemHtml(item) {
-    if (!item.isDirectory)    fileList.push(item.name);
+    if (!item.isDirectory) fileList.push(item.name);
     return `
     <div class="item ${item.isDirectory ? 'dir-item' : 'file-item'}  ${item.collapsed ? 'collapsed' : ''}">
     <span class="name" onclick="choose(this.innerText,this)">${item.name}</span>
@@ -26,15 +26,15 @@ function createItemHtml(item) {
     </div>
     `
 }
-function clearStorage(){
+function clearStorage() {
     // alert(data);
     localStorage.clear();
 }
 
-function stepFile(step){
+function stepFile(step) {
 
-    let index=step+(chosen?fileList.indexOf(chosen.name):-1);
-    if (index<0 || index>=fileList.length) return;
+    let index = step + (chosen ? fileList.indexOf(chosen.name) : -1);
+    if (index < 0 || index >= fileList.length) return;
     choose(fileList[index])
 }
 
@@ -49,7 +49,7 @@ function save() {
 function getChildrenOfItem(item) {
     return data.filter(el => el.parent == item.path)
 }
-function choose(name,element=null) {
+function choose(name, element = null) {
     // let name = element.innerText;
     let item = findItemByName(name)
     // console.log(item.contents)
@@ -81,20 +81,20 @@ function publish() {
     let toSave = data.filter(el => el.oldContents);
     // console.log(toSave);
     Promise.all(toSave.map(file => {
-        let { path, contents,parent } = file
+        let { path, contents, parent } = file
         return fetch("/save", {
             method: "post",
-            body: JSON.stringify({ path, contents,parent }),
+            body: JSON.stringify({ path, contents, parent }),
             headers: {
                 'Content-Type': 'application/json',
             },
-        }).then(res=>res.json())
+        }).then(res => res.json())
     })
     ).then((res) => {
-        console.log("ALL done",res);
-        fetch("/push").then( (res)=>{
-            toSave.forEach(el=>{
-                console.log('CHAN',el)
+        console.log("ALL done", res);
+        fetch("/push").then((res) => {
+            toSave.forEach(el => {
+                console.log('CHAN', el)
                 delete el.oldContents;
                 storeData(el);
             })
@@ -102,19 +102,36 @@ function publish() {
     }
     ).catch(console.error);
 }
-function pull(){
-    fetch('/pull').then((res)=>res.json()).then(console.log)
+function pull() {
+    fetch('/pull').then((res) => res.json()).then((res)=>{
+        console.log(res);
+       
+        fetch('/json').then(res => res.json()).then (d=>{
+            data=d;
+            storeData();
+        })
+    })
 }
-function status(){
-    fetch('/status').then((res)=>res.json()).then(console.log)
+function status() {
+    fetch('/status').then((res) => res.json()).then((response)=>{
+        console.log(response);
+        let statusButton=document.getElementById("statusBtn");
+        if (response.behind){
+            console.log("we are behind");
+            statusButton.classList.add("red");
+        } else {
+            statusButton.classList.remove('red');
+        }
+    
+    })
 }
-function toggleSide(){
-    let options=document.getElementById('options');
-    let side=document.getElementById('side')
-    console.log("SIDE",side)
+function toggleSide() {
+    let options = document.getElementById('options');
+    let side = document.getElementById('side')
+    console.log("SIDE", side)
     side.classList.toggle('hidden');
     options.classList.toggle('hidden');
-    
+
 }
 
 function updateObj(name, contents) {
