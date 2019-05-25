@@ -7,11 +7,12 @@ async function init() {
     mainElement = document.getElementById('main')
     if (localStorage.length) {
         Object.keys(localStorage).forEach(el => { data.push(JSON.parse(localStorage[el])) })
-        data.sort((a, b) => a.name < b.name ? -1 : 1).sort((a, b) => b.isDirectory - a.isDirectory)
+        sortData();
         // alert(data)
 
     } else {
         data = await fetch('/json').then(res => res.json())
+        sortData();
         // console.log(data)
         storeData();
     }
@@ -30,7 +31,9 @@ function clearStorage() {
     // alert(data);
     localStorage.clear();
 }
-
+function sortData(){
+    data.sort((a, b) => a.name < b.name ? -1 : 1).sort((a, b) => b.isDirectory - a.isDirectory)
+}
 function stepFile(step) {
 
     let index = step + (chosen ? fileList.indexOf(chosen.name) : -1);
@@ -150,6 +153,20 @@ function addNewFile(){
             console.log("File is unique but not correct");
         } else {
             console.log("Fine,we can go ahead and create this one",fileName);
+            let obj={contents:"new",oldContents:"<<NEW_FILE>>",name:fileName,isDirectory:false}
+            if (chosen && chosen.isDirectory){
+                console.log("Will create a file under",chosen.path);
+                obj.parent=chosen.path;
+            } else {
+                console.log("Will create in main dir");
+                obj.parent="";
+            }
+            obj.path=obj.parent+'/'+fileName;
+            data.push(obj);
+            sortData();
+            redrawSide();
+            console.log("OBJ",obj)
+            choose(fileName)
         }
 
     }
