@@ -138,6 +138,22 @@ function toggleSide() {
     options.classList.toggle('hidden');
 
 }
+function addNewFile(){
+    let fileName=document.querySelector("input[name='newFileName']").value;
+    
+    console.log(fileName);
+    if (data.findIndex(el=>el.name==fileName)!=-1){
+        console.log("This name is in use");
+    } else {
+        let correct=/^[.\p{L}\w-]+$/u.test(fileName)
+        if (!correct){
+            console.log("File is unique but not correct");
+        } else {
+            console.log("Fine,we can go ahead and create this one",fileName);
+        }
+
+    }
+}
 
 function updateObj(name, contents) {
     let obj = findItemByName(name);
