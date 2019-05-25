@@ -29,9 +29,12 @@ router.post('/save',async (req,res)=>{
 })
 
 router.get('/pull', async function (req, res, next) {
+  await git.add('.');
+  await git.commit('Sync from app');
  let result=await git.pull().catch( (e)=>{
    console.error(e);
    res.json(e);
+   
  } );
 console.log("PULL")
 res.json(result);
@@ -49,6 +52,7 @@ router.get('/status', async function (req, res, next) {
  })
 router.get('/push', async function (req, res, next) {
   await git.add('.');
+  await git.commit('Sync from app');
   await git.pull();
   await git.commit('Sync from app');
   await git.push();
