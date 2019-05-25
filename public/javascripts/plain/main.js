@@ -109,6 +109,11 @@ function pull() {
         fetch('/json').then(res => res.json()).then (d=>{
             data=d;
             storeData();
+            redrawSide();
+            if (chosen && !chosen.isDirectory){
+                chosen=findItemByName(chosen.name);
+                mainElement.innerText = chosen.contents;
+            }
         })
     })
 }
@@ -137,11 +142,12 @@ function toggleSide() {
 function updateObj(name, contents) {
     let obj = findItemByName(name);
     // console.log(contents)
-    if (!obj.oldContents) {
-        obj.oldContents = obj.contents;
-    }
+    // if (!obj.oldContents) {
+    //     obj.oldContents = obj.contents;
+    // }
     if (contents != obj.contents) {
         console.log("Inne!");
+        obj.oldContents=obj.contents;
         obj.contents = contents;
     }
 }
