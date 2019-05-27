@@ -17,6 +17,11 @@ async function init() {
         storeData();
     }
     redrawSide();
+
+    navigator.serviceWorker.register('/service-worker.js')
+        .then((reg) => {
+            console.log('Service worker registered.', reg);
+        });
 }
 function createItemHtml(item) {
     if (!item.isDirectory) fileList.push(item.name);
@@ -31,7 +36,7 @@ function clearStorage() {
     // alert(data);
     localStorage.clear();
 }
-function sortData(){
+function sortData() {
     data.sort((a, b) => a.name < b.name ? -1 : 1).sort((a, b) => b.isDirectory - a.isDirectory)
 }
 function stepFile(step) {
@@ -106,31 +111,31 @@ function publish() {
     ).catch(console.error);
 }
 function pull() {
-    fetch('/pull').then((res) => res.json()).then((res)=>{
+    fetch('/pull').then((res) => res.json()).then((res) => {
         console.log(res);
-       
-        fetch('/json').then(res => res.json()).then (d=>{
-            data=d;
+
+        fetch('/json').then(res => res.json()).then(d => {
+            data = d;
             storeData();
             redrawSide();
-            if (chosen && !chosen.isDirectory){
-                chosen=findItemByName(chosen.name);
+            if (chosen && !chosen.isDirectory) {
+                chosen = findItemByName(chosen.name);
                 mainElement.innerText = chosen.contents;
             }
         })
     })
 }
 function status() {
-    fetch('/status').then((res) => res.json()).then((response)=>{
+    fetch('/status').then((res) => res.json()).then((response) => {
         console.log(response);
-        let statusButton=document.getElementById("statusBtn");
-        if (response.behind){
+        let statusButton = document.getElementById("statusBtn");
+        if (response.behind) {
             console.log("we are behind");
             statusButton.classList.add("red");
         } else {
             statusButton.classList.remove('red');
         }
-    
+
     })
 }
 function toggleSide() {
@@ -141,31 +146,31 @@ function toggleSide() {
     options.classList.toggle('hidden');
 
 }
-function addNewFile(){
-    let fileName=document.querySelector("input[name='newFileName']").value;
-    
+function addNewFile() {
+    let fileName = document.querySelector("input[name='newFileName']").value;
+
     console.log(fileName);
-    if (data.findIndex(el=>el.name==fileName)!=-1){
+    if (data.findIndex(el => el.name == fileName) != -1) {
         console.log("This name is in use");
     } else {
-        let correct=/^[.\p{L}\w-]+$/u.test(fileName)
-        if (!correct){
+        let correct = /^[.\p{L}\w-]+$/u.test(fileName)
+        if (!correct) {
             console.log("File is unique but not correct");
         } else {
-            console.log("Fine,we can go ahead and create this one",fileName);
-            let obj={contents:"new",oldContents:"<<NEW_FILE>>",name:fileName,isDirectory:false}
-            if (chosen && chosen.isDirectory){
-                console.log("Will create a file under",chosen.path);
-                obj.parent=chosen.path;
+            console.log("Fine,we can go ahead and create this one", fileName);
+            let obj = { contents: "new", oldContents: "<<NEW_FILE>>", name: fileName, isDirectory: false }
+            if (chosen && chosen.isDirectory) {
+                console.log("Will create a file under", chosen.path);
+                obj.parent = chosen.path;
             } else {
                 console.log("Will create in main dir");
-                obj.parent="";
+                obj.parent = "";
             }
-            obj.path=obj.parent+'/'+fileName;
+            obj.path = obj.parent + '/' + fileName;
             data.push(obj);
             sortData();
             redrawSide();
-            console.log("OBJ",obj)
+            console.log("OBJ", obj)
             choose(fileName)
         }
 
@@ -180,7 +185,7 @@ function updateObj(name, contents) {
     // }
     if (contents != obj.contents) {
         console.log("Inne!");
-        obj.oldContents=obj.contents;
+        obj.oldContents = obj.contents;
         obj.contents = contents;
     }
 }
