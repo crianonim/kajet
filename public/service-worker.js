@@ -2,6 +2,7 @@ const FILES_TO_CACHE = [
     '/',
     '/stylesheets/style.css',
     '/javascripts/plain/main.js',
+    '/manifest.json'
 ];
 const CACHE_NAME='kajet-v1'
 self.addEventListener("install", event => {
