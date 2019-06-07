@@ -19,7 +19,7 @@ body {
 #side {
   width: 200px;
   max-width: 30%;
-  background-color: #eee; 
+  /* background-color: #eee;  */
   overflow-y: scroll;
   flex-shrink: 0;
   height: 100%;
@@ -67,11 +67,16 @@ body {
   display: none;
 }
 button{
-  background-color: #ccc;
+  background-color: transparent;
+  box-shadow: 1px 1px;
   padding: 8px;
   margin: 3px;
-  border: 1px solid #333;
+  border: 1px solid black;
   cursor: pointer;
+}
+button:disabled{
+  background-color: black;
+  color:white;
 }
 nav {
   display: flex;
