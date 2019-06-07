@@ -71,7 +71,7 @@ button{
   padding: 8px;
   margin: 3px;
   border: 1px solid #333;
-
+  cursor: pointer;
 }
 nav {
   display: flex;
@@ -85,6 +85,7 @@ button.red {
   border: red;
   color: red;
 }
+
 .modified {
   color: coral;
 }

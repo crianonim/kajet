@@ -9,7 +9,7 @@ block content
      button(onclick="stepFile(-1)") ^ Previous ^
      button(onclick="stepFile(1)") ⌄ Next &#8964;
     #options
-     button(onclick="sync()") Sync
+     button#syncButton(onclick="sync()") Sync
      button#statusBtn(onclick="status()") Status
      button(onclick="clearStorage()") Clear
      input(name="newFileName")

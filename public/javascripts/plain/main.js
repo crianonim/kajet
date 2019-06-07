@@ -101,14 +101,17 @@ function locallyChangedFiles() {
 
 async function sync() {
     save();
-    let toSave = locallyChangedFiles()
+    let button = document.getElementById("syncButton");
+    button.setAttribute("disabled", true);
+    let toSave = locallyChangedFiles();
+
     Promise.all(toSave.map(file => {
         let {
             path,
             contents,
             parent
         } = file
-        return fetch("/save", {
+        return fetch("/sav", {
             method: "post",
             body: JSON.stringify({
                 path,
@@ -118,7 +121,13 @@ async function sync() {
             headers: {
                 'Content-Type': 'application/json',
             },
-        }).then(res => res.json())
+        }).then(res => {
+            if (res.status == 200) {
+                return res.json()
+            } else {
+                throw Error("Status: " + res.status);
+            }
+        }).catch((err) => { console.log("ERR", err); throw Error(err) });
     })).then((res) => {
         console.log("ALL saved", res);
         fetch("/push").then(async () => {
@@ -128,8 +137,16 @@ async function sync() {
                 chosen = findItemByName(chosen.name);
                 mainElement.innerText = chosen.contents;
             }
+        }).then(() => {
+            console.log("FINISHED SYNC");
+            button.classList.remove('red');
+            button.removeAttribute("disabled");
         })
-    }).catch(console.error);
+    }).catch((err) => {
+        console.warn("ERR", err);
+        button.classList.add('red');
+        button.removeAttribute("disabled");
+    })
 }
 
 
