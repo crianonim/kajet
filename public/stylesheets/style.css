@@ -85,3 +85,6 @@ button.red {
   border: red;
   color: red;
 }
+.modified {
+  color: coral;
+}

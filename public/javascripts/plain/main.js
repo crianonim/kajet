@@ -32,14 +32,13 @@ function createItemHtml(item) {
     if (!item.isDirectory) fileList.push(item.name);
     return `
     <div class="item ${item.isDirectory ? 'dir-item' : 'file-item'}  ${item.collapsed ? 'collapsed' : ''}">
-    <span class="name" onclick="choose(this.innerText,this)">${item.name}</span>
+    <span class="name ${item.modified?"modified":""}" onclick="choose(this.innerText,this)">${item.name}</span>
     ${item.isDirectory ? getChildrenOfItem(item).map(createItemHtml).join('\n') : ''}
     </div>
     `
 }
 
 function clearStorage() {
-    // alert(data);
     localStorage.clear();
 }
 
@@ -55,7 +54,7 @@ function stepFile(step = 1) {
 
 function save() {
     if (chosen && !chosen.isDirectory) {
-        console.log("SAVING", chosen.name)
+        // console.log("SAVING", chosen.name)
         updateObj(chosen.name, mainElement.innerText);
     }
     // storeAllData();
@@ -92,7 +91,7 @@ function input() {
 }
 
 function autoSave() {
-    console.log("AutoSave");
+    // console.log("AutoSave");
     setTimeout(autoSave, AUTOSAVE_PERIOD);
     save();
 }
@@ -203,6 +202,7 @@ function addNewFile() {
             sortData();
             redrawSide();
             console.log("OBJ", obj)
+            storeItem(obj);
             choose(fileName)
         }
 
@@ -229,6 +229,7 @@ function updateObj(name, contents) {
     }
     
     if (changed) {
+        redrawSide();
         storeItem(obj);
     }
 }
