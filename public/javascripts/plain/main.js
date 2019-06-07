@@ -111,7 +111,7 @@ async function sync() {
             contents,
             parent
         } = file
-        return fetch("/sav", {
+        return fetch("/save", {
             method: "post",
             body: JSON.stringify({
                 path,
@@ -130,7 +130,7 @@ async function sync() {
         }).catch((err) => { console.warn("ERR", err); throw Error(err) });
     })).then((res) => {
         console.log("ALL saved", res);
-        return fetch("/push").then(async () => {
+        return fetch("/sync").then(async () => {
             await loadDataFromServer();
             redrawSide();
             if (chosen && !chosen.isDirectory) {
@@ -146,21 +146,6 @@ async function sync() {
         console.warn("ERR", err);
         button.classList.add('red');
         button.removeAttribute("disabled");
-    })
-}
-
-
-function status() {
-    fetch('/status').then((res) => res.json()).then((response) => {
-        console.log(response);
-        let statusButton = document.getElementById("statusBtn");
-        if (response.behind) {
-            console.log("we are behind");
-            statusButton.classList.add("red");
-        } else {
-            statusButton.classList.remove('red');
-        }
-
     })
 }
 
