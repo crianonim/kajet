@@ -99,7 +99,7 @@ function locallyChangedFiles() {
     return data.filter(el => el.oldContents);
 }
 
-async function publish() {
+async function sync() {
     save();
     let toSave = locallyChangedFiles()
     Promise.all(toSave.map(file => {
@@ -132,22 +132,6 @@ async function publish() {
     }).catch(console.error);
 }
 
-function pull() {
-    fetch('/pull').then((res) => res.json()).then((res) => {
-        console.log(res);
-
-        fetch('/json').then(res => res.json()).then(d => {
-            data = d;
-            storeAllData();
-            sortData();
-            redrawSide();
-            if (chosen && !chosen.isDirectory) {
-                chosen = findItemByName(chosen.name);
-                mainElement.innerText = chosen.contents;
-            }
-        })
-    })
-}
 
 function status() {
     fetch('/status').then((res) => res.json()).then((response) => {
