@@ -111,7 +111,7 @@ async function sync() {
             contents,
             parent
         } = file
-        return fetch("/save", {
+        return fetch("/sav", {
             method: "post",
             body: JSON.stringify({
                 path,
@@ -127,17 +127,17 @@ async function sync() {
             } else {
                 throw Error("Status: " + res.status);
             }
-        }).catch((err) => { console.log("ERR", err); throw Error(err) });
+        }).catch((err) => { console.warn("ERR", err); throw Error(err) });
     })).then((res) => {
         console.log("ALL saved", res);
-        fetch("/push").then(async () => {
+        return fetch("/push").then(async () => {
             await loadDataFromServer();
             redrawSide();
             if (chosen && !chosen.isDirectory) {
                 chosen = findItemByName(chosen.name);
                 mainElement.innerText = chosen.contents;
             }
-        }).then(() => {
+        }).catch(err => { console.warn("PUSH error", err); throw (err) }).then(() => {
             console.log("FINISHED SYNC");
             button.classList.remove('red');
             button.removeAttribute("disabled");
