@@ -11,13 +11,9 @@ async function init() {
             data.push(JSON.parse(localStorage[el]))
         })
         sortData();
-        // alert(data)
 
     } else {
-        data = await fetch('/json').then(res => res.json())
-        sortData();
-        // console.log(data)
-        storeAllData();
+        await loadDataFromServer();
     }
     redrawSide();
     autoSave();
@@ -27,12 +23,16 @@ async function init() {
             console.log('Service worker registered.', reg);
         });
 }
-
+async function loadDataFromServer() {
+    data = await fetch('/json').then(res => res.json())
+    sortData();
+    storeAllData();
+}
 function createItemHtml(item) {
     if (!item.isDirectory) fileList.push(item.name);
     return `
     <div class="item ${item.isDirectory ? 'dir-item' : 'file-item'}  ${item.collapsed ? 'collapsed' : ''}">
-    <span class="name ${item.modified?"modified":""}" onclick="choose(this.innerText,this)">${item.name}</span>
+    <span class="name ${item.modified ? "modified" : ""}" onclick="choose(this.innerText,this)">${item.name}</span>
     ${item.isDirectory ? getChildrenOfItem(item).map(createItemHtml).join('\n') : ''}
     </div>
     `
@@ -57,7 +57,6 @@ function save() {
         // console.log("SAVING", chosen.name)
         updateObj(chosen.name, mainElement.innerText);
     }
-    // storeAllData();
 }
 
 function getChildrenOfItem(item) {
@@ -100,10 +99,9 @@ function locallyChangedFiles() {
     return data.filter(el => el.oldContents);
 }
 
-function publish() {
+async function publish() {
     save();
-    let toSave = data.filter(el => el.oldContents);
-    // console.log(toSave);
+    let toSave = locallyChangedFiles()
     Promise.all(toSave.map(file => {
         let {
             path,
@@ -122,13 +120,14 @@ function publish() {
             },
         }).then(res => res.json())
     })).then((res) => {
-        console.log("ALL done", res);
-        fetch("/push").then((res) => {
-            toSave.forEach(el => {
-                console.log('CHAN', el)
-                delete el.oldContents;
-                storeAllData(el);
-            })
+        console.log("ALL saved", res);
+        fetch("/push").then(async () => {
+            await loadDataFromServer();
+            redrawSide();
+            if (chosen && !chosen.isDirectory) {
+                chosen = findItemByName(chosen.name);
+                mainElement.innerText = chosen.contents;
+            }
         })
     }).catch(console.error);
 }
@@ -140,6 +139,7 @@ function pull() {
         fetch('/json').then(res => res.json()).then(d => {
             data = d;
             storeAllData();
+            sortData();
             redrawSide();
             if (chosen && !chosen.isDirectory) {
                 chosen = findItemByName(chosen.name);
@@ -214,20 +214,20 @@ function updateObj(name, contents) {
     let changed = false;
     if (contents == obj.oldContents && obj.modified) {
         obj.modified = false;
-        obj.contents=contents;    
+        obj.contents = contents;
         changed = true;
         console.log("Back to old", name);
         delete obj.oldContents;
     } else if (contents != obj.contents) {
         console.log("Changed!", name);
         changed = true;
-        if (!obj.oldContents){
+        if (!obj.oldContents) {
             obj.oldContents = obj.contents;
         }
         obj.contents = contents;
         obj.modified = true;
     }
-    
+
     if (changed) {
         redrawSide();
         storeItem(obj);
