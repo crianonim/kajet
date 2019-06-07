@@ -17,7 +17,7 @@ async function init() {
         data = await fetch('/json').then(res => res.json())
         sortData();
         // console.log(data)
-        storeData();
+        storeAllData();
     }
     redrawSide();
     autoSave();
@@ -55,11 +55,10 @@ function stepFile(step = 1) {
 
 function save() {
     if (chosen && !chosen.isDirectory) {
-        console.log("SAVING",chosen.name)
+        console.log("SAVING", chosen.name)
         updateObj(chosen.name, mainElement.innerText);
-        storeItem(chosen);
     }
-    // storeData();
+    // storeAllData();
 }
 
 function getChildrenOfItem(item) {
@@ -89,7 +88,7 @@ function redrawSide() {
 
 //whenever key is pressed
 function input() {
-   
+
 }
 
 function autoSave() {
@@ -129,7 +128,7 @@ function publish() {
             toSave.forEach(el => {
                 console.log('CHAN', el)
                 delete el.oldContents;
-                storeData(el);
+                storeAllData(el);
             })
         })
     }).catch(console.error);
@@ -141,7 +140,7 @@ function pull() {
 
         fetch('/json').then(res => res.json()).then(d => {
             data = d;
-            storeData();
+            storeAllData();
             redrawSide();
             if (chosen && !chosen.isDirectory) {
                 chosen = findItemByName(chosen.name);
@@ -212,27 +211,36 @@ function addNewFile() {
 
 function updateObj(name, contents) {
     let obj = findItemByName(name);
-
-    if (contents != obj.contents) {
+    let changed = false;
+    if (contents == obj.oldContents && obj.modified) {
+        obj.modified = false;
+        obj.contents=contents;    
+        changed = true;
+        console.log("Back to old", name);
+        delete obj.oldContents;
+    } else if (contents != obj.contents) {
         console.log("Changed!", name);
-        obj.oldContents = obj.contents;
+        changed = true;
+        if (!obj.oldContents){
+            obj.oldContents = obj.contents;
+        }
         obj.contents = contents;
+        obj.modified = true;
     }
-    //  else {
-    //     console.log("Back to old",name);
-    //     delete obj.oldContents;
-    // }
-    storeItem(obj);
+    
+    if (changed) {
+        storeItem(obj);
+    }
 }
 
-function storeData() {
+function storeAllData() {
     data.forEach(el => {
         storeItem(el);
     })
 }
 
 function storeItem(item) {
-    console.log("Storing",item.name);
+    console.log("Storing", item.name);
     localStorage.setItem(item.name, JSON.stringify(item))
 }
 
