@@ -82,7 +82,7 @@ nav {
   flex-grow: 1;
 }
 button.red {
-  border: red;
+  border-color: red;
   color: red;
 }
 

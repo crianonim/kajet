@@ -111,7 +111,7 @@ async function sync() {
             contents,
             parent
         } = file
-        return fetch("/sav", {
+        return fetch("/save", {
             method: "post",
             body: JSON.stringify({
                 path,
