@@ -92,6 +92,6 @@ button.red {
   color: red;
 }
 
-.modified {
-  color: coral;
+.modified::before {
+  content: '●';
 }
