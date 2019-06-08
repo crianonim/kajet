@@ -9,11 +9,17 @@ block content
      button(onclick="stepFile(-1)") &lt;
      button(onclick="stepFile(1)") &gt;
     #options
-     button#syncButton(onclick="sync()") Sync
-     button(onclick="clearStorage()") Clear
-     input(name="newFileName")
-     button(onclick="addNewFile()") Add
-    
+     #mainOptions 
+      button#syncButton(onclick="sync()") Sync
+      button(onclick="clearStorage()") Clear
+      button(onclick="newSection()") New
+      button(onclick="searchSection()") Search
+     #newSection
+      input(name="newFileName")
+      button(onclick="addNewFile()") Create File
+     #searchSection
+      input(name="newFileName")
+      button(onclick="addNewFile()") Search
    #container
       #side
       #main(contenteditable=true,spellcheck=false,oninput="input()")

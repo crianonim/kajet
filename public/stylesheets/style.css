@@ -95,3 +95,12 @@ button.red {
 .modified::before {
   content: '●';
 }
+
+#newSection, #searchSection {
+  display: flex;
+  padding: 1px;
+}
+#newSection > input, #searchSection > input{
+  flex:1;
+  margin: 3px;
+}
