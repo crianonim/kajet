@@ -56,18 +56,15 @@ body {
 }
 
 .item .name:hover {
-  background-color:#333;
-  color:#eee;
+  background-color: #333;
+  color: #eee;
 }
 
 #side>.item {
   padding-left: 0;
 }
 
-.hidden {
-  display: none;
-}
-button{
+button {
   background-color: transparent;
   box-shadow: 1px 1px;
   padding: 8px;
@@ -75,18 +72,21 @@ button{
   border: 1px solid black;
   cursor: pointer;
 }
-button:disabled{
+
+button:disabled {
   background-color: black;
-  color:white;
+  color: white;
 }
+
 nav {
   display: flex;
   align-items: center;
-
 }
+
 #chosen {
   flex-grow: 1;
 }
+
 button.red {
   border-color: red;
   color: red;
@@ -99,8 +99,14 @@ button.red {
 #newSection, #searchSection {
   display: flex;
   padding: 1px;
+  
 }
-#newSection > input, #searchSection > input{
-  flex:1;
+
+#newSection>input, #searchSection>input {
+  flex: 1;
   margin: 3px;
+}
+
+.hidden {
+  display: none!Important;
 }

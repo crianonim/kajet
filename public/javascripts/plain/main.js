@@ -149,13 +149,9 @@ async function sync() {
     })
 }
 
-function toggleSide() {
-    let options = document.getElementById('options');
-    let side = document.getElementById('side')
-    console.log("SIDE", side)
-    side.classList.toggle('hidden');
-    options.classList.toggle('hidden');
-
+function toggleSection(name) {
+    let section = document.getElementById(name);
+    section.classList.toggle('hidden');
 }
 
 function addNewFile() {

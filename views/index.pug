@@ -4,7 +4,7 @@ block content
   #app
    #header
     nav
-     button(onclick="toggleSide()") ...
+     button(onclick="toggleSection('side');toggleSection('options')") ...
      span#chosen 
      button(onclick="stepFile(-1)") &lt;
      button(onclick="stepFile(1)") &gt;
@@ -12,12 +12,12 @@ block content
      #mainOptions 
       button#syncButton(onclick="sync()") Sync
       button(onclick="clearStorage()") Clear
-      button(onclick="newSection()") New
-      button(onclick="searchSection()") Search
-     #newSection
+      button(onclick="toggleSection('newSection')") New
+      button(onclick="toggleSection('searchSection')") Search
+     #newSection(class="hidden")
       input(name="newFileName")
       button(onclick="addNewFile()") Create File
-     #searchSection
+     #searchSection(class="hidden")
       input(name="newFileName")
       button(onclick="addNewFile()") Search
    #container
