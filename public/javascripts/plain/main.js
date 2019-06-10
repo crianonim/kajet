@@ -185,7 +185,11 @@ function addNewFile() {
 
     }
 }
+function search(){
+    let searchField = document.querySelector("input[name='searchField']").value;
 
+    console.log(searchField);
+}
 function updateObj(name, contents) {
     let obj = findItemByName(name);
     let changed = false;
