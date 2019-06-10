@@ -104,49 +104,49 @@ async function sync() {
     let button = document.getElementById("syncButton");
     button.setAttribute("disabled", true);
     let toSave = locallyChangedFiles();
-
-    Promise.all(toSave.map(file => {
-        let {
-            path,
-            contents,
-            parent
-        } = file
-        return fetch("/save", {
-            method: "post",
-            body: JSON.stringify({
+    try {
+        let saves = await Promise.all(toSave.map(async file => {
+            let {
                 path,
                 contents,
                 parent
-            }),
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        }).then(res => {
+            } = file
+
+            let res = await fetch("/save", {
+                method: "post",
+                body: JSON.stringify({
+                    path,
+                    contents,
+                    parent
+                }),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
             if (res.status == 200) {
                 return res.json()
             } else {
                 throw Error("Status: " + res.status);
             }
-        }).catch((err) => { console.warn("ERR", err); throw Error(err) });
-    })).then((res) => {
-        console.log("ALL saved", res);
-        return fetch("/sync").then(async () => {
-            await loadDataFromServer();
-            redrawSide();
-            if (chosen && !chosen.isDirectory) {
-                chosen = findItemByName(chosen.name);
-                mainElement.innerText = chosen.contents;
-            }
-        }).catch(err => { console.warn("PUSH error", err); throw (err) }).then(() => {
-            console.log("FINISHED SYNC");
-            button.classList.remove('red');
-            button.removeAttribute("disabled");
-        })
-    }).catch((err) => {
+        }));
+        console.log("ALL saved", saves);
+        let synced = await fetch("/sync").catch(err => { console.warn("PUSH error", err); throw (err) });
+        await loadDataFromServer();
+        redrawSide();
+        console.log("FINISHED SYNC");
+        button.classList.remove('red');
+        button.removeAttribute("disabled");
+        if (chosen && !chosen.isDirectory) {
+            chosen = findItemByName(chosen.name);
+            mainElement.innerText = chosen.contents;
+        }
+    }
+    catch (err) {
         console.warn("ERR", err);
         button.classList.add('red');
         button.removeAttribute("disabled");
-    })
+    }
+
 }
 
 function toggleSection(name) {
