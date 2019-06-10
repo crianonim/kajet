@@ -96,13 +96,13 @@ button.red {
   content: '●';
 }
 
-#newSection, #searchSection {
+#newSection {
   display: flex;
   padding: 1px;
   
 }
 
-#newSection>input, #searchSection>input {
+#newSection>input {
   flex: 1;
   margin: 3px;
 }

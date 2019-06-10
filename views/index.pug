@@ -13,13 +13,10 @@ block content
       button#syncButton(onclick="sync()") Sync
       button(onclick="clearStorage()") Clear
       button(onclick="toggleSection('newSection')") New
-      button(onclick="toggleSection('searchSection')") Search
      #newSection(class="hidden")
       input(name="newFileName")
       button(onclick="addNewFile()") Create File
-     #searchSection(class="hidden")
-      input(name="newFileName")
-      button(onclick="addNewFile()") Search
+     
    #container
       #side
       #main(contenteditable=true,spellcheck=false)
