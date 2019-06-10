@@ -84,11 +84,6 @@ function redrawSide() {
     document.getElementById('side').innerHTML = data.filter(el => el.parent == "").map(createItemHtml).join('\n');
 }
 
-//whenever key is pressed
-function input() {
-
-}
-
 function autoSave() {
     // console.log("AutoSave");
     setTimeout(autoSave, AUTOSAVE_PERIOD);
