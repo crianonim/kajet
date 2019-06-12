@@ -1,4 +1,4 @@
-return false;
+// return false;
 const FILES_TO_CACHE = [
     '/',
     '/stylesheets/style.css',

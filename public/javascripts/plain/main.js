@@ -17,7 +17,7 @@ async function init() {
     }
     redrawSide();
     autoSave();
-    return
+    // return
     navigator.serviceWorker.register('/service-worker.js')
         .then((reg) => {
             console.log('Service worker registered.', reg);
